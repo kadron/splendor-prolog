@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/SplendorGithub.sln
+/.vs/SplendorGithub/v14/.suo
+/.vs/config/applicationhost.config
