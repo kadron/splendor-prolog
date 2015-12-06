@@ -1,0 +1,509 @@
+body {
+    font-family: 'Satisfy', cursive;
+}
+#RootContainer {width: 100%; height:100%; position: absolute; left: 0px; top: 0px; background: url(images/board.jpg) no-repeat center center ; background-size: contain;}
+
+#BoardFixed {
+    width: 14vh; 
+    height: 100vh; 
+    position: absolute; 
+    top: 0px; 
+    left: 50%; 
+    margin-left: -80vh; 
+    border: 0px none red; 
+    z-index: 8;
+}
+
+#Board {width: 156vh; height: 100vh; position: absolute; top: 0px; left: 50%; margin-left: -80vh; border: 0px none red; }
+.Card {
+    width: 18vh; 
+    height: 25vh; 
+    position: absolute; 
+    border: 2px none red; 
+    background-repeat: no-repeat; 
+    background-position: center center; 
+    background-size: 100% 100%;
+    box-shadow: 0.1vh 0.5vh 1.9vh 0px rgba(0,0,0,0.4);
+    transition: box-shadow 0.3s;
+}
+.Card.Active {
+    box-shadow: -2.1vh 8.3vh 4.9vh 3px rgba(0,0,0,0.7) !important;
+}
+#Board.Ended .Card {
+    box-shadow: 0.1vh 0.5vh 1.9vh 0px rgba(0,0,0,0.4) !important;
+    cursor: auto;
+}
+#Board.Ended .TokenContainer > a {
+    cursor: auto;
+}
+
+.Card:hover {
+    box-shadow: -1.4vh 3.0vh 4.9vh 3px rgba(0,0,0,0.4);
+}
+
+.CardCol1 {left: 31vh; z-index: 10;}
+.CardCol2 {left: 56vh; z-index: 11;}
+.CardCol3 {left: 80vh; z-index: 12;}
+.CardCol4 {left: 105vh; z-index: 13;}
+.CardRow1 {top: 57vh;}
+.CardRow2 {top: 28.5vh;}
+.CardRow3 {top: 0vh;}
+
+#RootContainer {perspective: 850px;}
+#Board {transform: rotateX(9deg);perspective: 850px; }
+
+.GemContainer {position: absolute; left: 55.3vh; top: 86.7vh; width: 72vh;}
+
+.GemBackContainer {position: absolute; left: 53.1vh; top: 66.4vh; z-index: 100; background: rgba(0,0,0,0.8); padding: 20px; display: none; opacity: 0;width: 65vh;}
+.GemBackInfo {
+    position: relative;
+    color: #FFF;
+    font-size: 4.8vh;
+}
+.Gem {
+    z-index: 100; 
+    color: #FFF; 
+    font-size: 5.8vh; 
+    line-height: 9vh;
+    display: inline-block; 
+    width: 8.8vh; 
+    height: 7.2vh;
+    border: 3px solid #444;
+    border-radius: 1.3vh;
+    margin-right: 0.1vh;
+    text-align: right;
+    padding-right: 1.2vh;
+    vertical-align: top;
+    
+    -webkit-text-fill-color: white; /* Will override color (regardless of order) */
+    -webkit-text-stroke-width: 1.3px;
+    -webkit-text-stroke-color: #555;
+}
+.GemBackContainer .Gem {
+    cursor: pointer;
+    position: relative;
+}
+.GemBackLink {
+    position: absolute;
+    top: 11vh;
+    display: block;
+    height: 8vh;
+    width: 100%;
+}
+.GemForwardLink {
+    position: absolute;
+    top: 0px;
+    display: block;
+    height: 7vh;
+    width: 100%;
+}
+.GemBackClose {
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    padding: 1.9vh;
+    font-size: 3.2vh;
+    color: #F00;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.BonusContainer {position: absolute; left: 55.9vh; top: 87.3vh}
+.Bonus {
+    z-index: 100; 
+    color: #FFF; 
+    font-size: 6.3vh;
+    display: inline-block; 
+    width: 3.7vh; 
+    height: 6.0vh;
+    border: 3px solid #AAA;
+    border-radius: 1.3vh;
+    margin-right: 5.5vh;
+    text-align: right;
+    padding-right: 0.9vh;
+    line-height: 7.5vh;
+    
+    -webkit-text-fill-color: white; /* Will override color (regardless of order) */
+    -webkit-text-stroke-width: 1.9px;
+    -webkit-text-stroke-color: #555;
+}
+.Gem.Gem1 {background: radial-gradient(#ffffff -70% , #dbdbdb, #555);}
+.Gem.Gem2 {background: radial-gradient(#0486f5 -70% , #3d23ff, #0f0f52);}
+.Gem.Gem3 {background: radial-gradient(#22830b -70% , #295c1d, #082600);}
+.Gem.Gem4 {background: radial-gradient(#d94949 -70% , #b72f2f, #620000);}
+.Gem.Gem5 {background: radial-gradient(#414141 -70% , #404040, #121212);}
+.Gem.Gem6 {font-size: 5vh; position: relative; top: 1vh; border: none; width: 5.7vh;}
+
+.Bonus.Bonus1 {background: radial-gradient(#ffffff -70% , #ffeded, #a8a8a8); border-color: #e8e8e8;}
+.Bonus.Bonus2 {background: radial-gradient(#0486f5 -70% , #a397ff, #005ebc); border-color: #7681ff;}
+.Bonus.Bonus3 {background: radial-gradient(#4fd92e -70% , #7aff5a, #0e170c); border-color: #6daa72;}
+.Bonus.Bonus4 {background: radial-gradient(#ff0000 -70% , #ffb6b6, #800606); border-color: #cb7272;}
+.Bonus.Bonus5 {background: radial-gradient(#414141 -70% , #e2e2e2, #121212); border-color: #959595;}
+.Bonus.Bonus6 {font-size: 5vh; position: relative; top: 2vh; border: none;}
+
+.Card {text-align: center; cursor: pointer;}
+.CardId {
+    text-align: center;
+    font-size: 20px;
+    line-height: 20px;
+    margin-top: 10px;
+    display: inline-block;
+    padding: 10px 10px 0px 10px;
+    background: rgba(255,255,255,0.5);
+}
+
+.TokenContainer {
+    background: url(images/highres/gems/chips.jpg) no-repeat top left;
+    background-size: contain;
+    width: 8.5vh;
+    height: 50vh;
+    position: absolute;
+    left: 131vh;
+    top: 7vh;
+    box-shadow: -0.4vh 0.3vh 0.8vh 0.0vh rgba(0,0,0,0.5);
+}
+.TokenContainer > a {
+    display: block;
+    height: 8.35vh;
+    margin-left: -4vh;
+    position: relative;
+    top: 0vh;
+    font-size: 7vh;
+    color: #d7f400;
+    cursor: pointer;
+}
+.TokenAvailable {
+    position: absolute;
+    font-size: 4.8vh;
+    color: #FFF;
+    left: 11vh;
+    top: 0.9vh;
+    height: 8.35vh;
+    width: 8.5vh;
+    text-align: center;
+    opacity: 0;
+}
+
+.TokenContainer > a .TokenOverlay{
+    background-color: rgba(0,0,0,0.55);
+    width: 53%;
+    height: 8.35vh;
+    position: absolute;
+    top: 0px;
+    left: 5.0vh;
+}
+
+.TokenContainer > a.Selected .TokenOverlay{
+    background-color: rgba(0,0,0,0.0);
+}
+
+.Send {
+    position: absolute;
+    left: 128vh;
+    bottom: 25vh;
+    color: #FFF;
+    text-decoration: none;
+    font-size: 5vh;
+    padding: 2vh;
+    background: radial-gradient(#005e00, #1d1212);
+    border-radius: 2.5vh;
+    border: 0.7vh solid #090;
+    box-shadow: -1.0vh 0.5vh 1.1vh 0vh rgba(0,0,0,0.3);
+    transition: box-shadow 0.2s, transform 0.2s;
+    display: none;
+    opacity: 0;
+}
+.Send:hover {
+    box-shadow: -1.8vh 1.0vh 1.1vh 0vh rgba(0,0,0,0.3);
+    transform: translate3d(0px,0px, 5px);
+}
+
+.Card[data-id="1"] {background-image: url(images/highres/cards/1.jpg);}
+.Card[data-id="2"] {background-image: url(images/highres/cards/2.jpg);}
+.Card[data-id="3"] {background-image: url(images/highres/cards/3.jpg);}
+.Card[data-id="4"] {background-image: url(images/highres/cards/4.jpg);}
+.Card[data-id="5"] {background-image: url(images/highres/cards/5.jpg);}
+.Card[data-id="6"] {background-image: url(images/highres/cards/6.jpg);}
+.Card[data-id="7"] {background-image: url(images/highres/cards/7.jpg);}
+.Card[data-id="8"] {background-image: url(images/highres/cards/8.jpg);}
+.Card[data-id="9"] {background-image: url(images/highres/cards/9.jpg);}
+.Card[data-id="10"] {background-image: url(images/highres/cards/10.jpg);}
+.Card[data-id="11"] {background-image: url(images/highres/cards/11.jpg);}
+.Card[data-id="12"] {background-image: url(images/highres/cards/12.jpg);}
+.Card[data-id="13"] {background-image: url(images/highres/cards/13.jpg);}
+.Card[data-id="14"] {background-image: url(images/highres/cards/14.jpg);}
+.Card[data-id="15"] {background-image: url(images/highres/cards/15.jpg);}
+.Card[data-id="16"] {background-image: url(images/highres/cards/16.jpg);}
+.Card[data-id="17"] {background-image: url(images/highres/cards/17.jpg);}
+.Card[data-id="18"] {background-image: url(images/highres/cards/18.jpg);}
+.Card[data-id="19"] {background-image: url(images/highres/cards/19.jpg);}
+.Card[data-id="20"] {background-image: url(images/highres/cards/20.jpg);}
+.Card[data-id="21"] {background-image: url(images/highres/cards/21.jpg);}
+.Card[data-id="22"] {background-image: url(images/highres/cards/22.jpg);}
+.Card[data-id="23"] {background-image: url(images/highres/cards/23.jpg);}
+.Card[data-id="24"] {background-image: url(images/highres/cards/24.jpg);}
+.Card[data-id="25"] {background-image: url(images/highres/cards/25.jpg);}
+.Card[data-id="26"] {background-image: url(images/highres/cards/26.jpg);}
+.Card[data-id="27"] {background-image: url(images/highres/cards/27.jpg);}
+.Card[data-id="28"] {background-image: url(images/highres/cards/28.jpg);}
+.Card[data-id="29"] {background-image: url(images/highres/cards/29.jpg);}
+.Card[data-id="30"] {background-image: url(images/highres/cards/30.jpg);}
+.Card[data-id="31"] {background-image: url(images/highres/cards/31.jpg);}
+.Card[data-id="32"] {background-image: url(images/highres/cards/32.jpg);}
+.Card[data-id="33"] {background-image: url(images/highres/cards/33.jpg);}
+.Card[data-id="34"] {background-image: url(images/highres/cards/34.jpg);}
+.Card[data-id="35"] {background-image: url(images/highres/cards/35.jpg);}
+.Card[data-id="36"] {background-image: url(images/highres/cards/36.jpg);}
+.Card[data-id="37"] {background-image: url(images/highres/cards/37.jpg);}
+.Card[data-id="38"] {background-image: url(images/highres/cards/38.jpg);}
+.Card[data-id="39"] {background-image: url(images/highres/cards/39.jpg);}
+.Card[data-id="40"] {background-image: url(images/highres/cards/40.jpg);}
+.Card[data-id="101"] {background-image: url(images/highres/cards/101.jpg);}
+.Card[data-id="102"] {background-image: url(images/highres/cards/102.jpg);}
+.Card[data-id="103"] {background-image: url(images/highres/cards/103.jpg);}
+.Card[data-id="104"] {background-image: url(images/highres/cards/104.jpg);}
+.Card[data-id="105"] {background-image: url(images/highres/cards/105.jpg);}
+.Card[data-id="106"] {background-image: url(images/highres/cards/106.jpg);}
+.Card[data-id="107"] {background-image: url(images/highres/cards/107.jpg);}
+.Card[data-id="108"] {background-image: url(images/highres/cards/108.jpg);}
+.Card[data-id="109"] {background-image: url(images/highres/cards/109.jpg);}
+.Card[data-id="110"] {background-image: url(images/highres/cards/110.jpg);}
+.Card[data-id="111"] {background-image: url(images/highres/cards/111.jpg);}
+.Card[data-id="112"] {background-image: url(images/highres/cards/112.jpg);}
+.Card[data-id="113"] {background-image: url(images/highres/cards/113.jpg);}
+.Card[data-id="114"] {background-image: url(images/highres/cards/114.jpg);}
+.Card[data-id="115"] {background-image: url(images/highres/cards/115.jpg);}
+.Card[data-id="116"] {background-image: url(images/highres/cards/116.jpg);}
+.Card[data-id="117"] {background-image: url(images/highres/cards/117.jpg);}
+.Card[data-id="118"] {background-image: url(images/highres/cards/118.jpg);}
+.Card[data-id="119"] {background-image: url(images/highres/cards/119.jpg);}
+.Card[data-id="120"] {background-image: url(images/highres/cards/120.jpg);}
+.Card[data-id="121"] {background-image: url(images/highres/cards/121.jpg);}
+.Card[data-id="122"] {background-image: url(images/highres/cards/122.jpg);}
+.Card[data-id="123"] {background-image: url(images/highres/cards/123.jpg);}
+.Card[data-id="124"] {background-image: url(images/highres/cards/124.jpg);}
+.Card[data-id="125"] {background-image: url(images/highres/cards/125.jpg);}
+.Card[data-id="126"] {background-image: url(images/highres/cards/126.jpg);}
+.Card[data-id="127"] {background-image: url(images/highres/cards/127.jpg);}
+.Card[data-id="128"] {background-image: url(images/highres/cards/128.jpg);}
+.Card[data-id="129"] {background-image: url(images/highres/cards/129.jpg);}
+.Card[data-id="130"] {background-image: url(images/highres/cards/130.jpg);}
+.Card[data-id="201"] {background-image: url(images/highres/cards/201.jpg);}
+.Card[data-id="202"] {background-image: url(images/highres/cards/202.jpg);}
+.Card[data-id="203"] {background-image: url(images/highres/cards/203.jpg);}
+.Card[data-id="204"] {background-image: url(images/highres/cards/204.jpg);}
+.Card[data-id="205"] {background-image: url(images/highres/cards/205.jpg);}
+.Card[data-id="206"] {background-image: url(images/highres/cards/206.jpg);}
+.Card[data-id="207"] {background-image: url(images/highres/cards/207.jpg);}
+.Card[data-id="208"] {background-image: url(images/highres/cards/208.jpg);}
+.Card[data-id="209"] {background-image: url(images/highres/cards/209.jpg);}
+.Card[data-id="210"] {background-image: url(images/highres/cards/210.jpg);}
+.Card[data-id="211"] {background-image: url(images/highres/cards/211.jpg);}
+.Card[data-id="212"] {background-image: url(images/highres/cards/212.jpg);}
+.Card[data-id="213"] {background-image: url(images/highres/cards/213.jpg);}
+.Card[data-id="214"] {background-image: url(images/highres/cards/214.jpg);}
+.Card[data-id="215"] {background-image: url(images/highres/cards/215.jpg);}
+.Card[data-id="216"] {background-image: url(images/highres/cards/216.jpg);}
+.Card[data-id="217"] {background-image: url(images/highres/cards/217.jpg);}
+.Card[data-id="218"] {background-image: url(images/highres/cards/218.jpg);}
+.Card[data-id="219"] {background-image: url(images/highres/cards/219.jpg);}
+.Card[data-id="220"] {background-image: url(images/highres/cards/220.jpg);}
+
+#Test {
+z-index: 20;
+position: absolute;
+}
+#PlayerCount {
+    font-size: 4vh;
+}
+#NewGameContainer {
+    z-index: 20;
+    position: absolute;
+    top: 10vh;
+}
+#NewGame {
+    text-decoration: none;
+    color: #FFF;
+    background: red;
+    display: block;
+    padding: 1vh;
+    font-size: 3vh;
+}
+
+.Score {
+    position: absolute;
+    border-radius: 50%;
+    color: #FFF;
+    background-color: #33141a;
+    border: 0.7vh solid #ffe200;
+    padding-top: 12px;
+    width: 7.3vh;
+    height: 7.3vh;
+    box-sizing: border-box;
+    font-size: 3.1vh;
+    text-align: center;
+}
+.Score1 {
+    left: 7vh;
+    top: 78vh;
+}
+.Score2 {
+    left: 5vh;
+    top: 1vh;
+}
+.Score3 {
+    left: 5vh;
+    top: 24vh;
+}
+.Score4 {
+    left: 5vh;
+    top: 49vh;
+}
+.Score .Info {
+    display: none;
+    font-size: 2vh;
+    font-family: "Lucida Console", Monaco, monospace;
+
+    border: 0.2vh solid #0F0;
+    background-color: rgba(0,0,0,0.7);
+    word-wrap: normal;
+    width: 40vh;
+    z-index: 1000;
+    position: absolute;
+    left: 8vh;
+    top: -1vh;
+    line-height: 3vh;
+    text-align: left;
+}
+.Score1 .Info {
+    top: -8vh;
+}
+.Score:hover .Info {
+    display: block;
+}
+.GemGold {
+    position: absolute;
+    width: 10vh;
+    height: 10vh;
+    background: url(images/highres/gems/gold.jpg) no-repeat center center;
+    background-size: contain;
+    left: 24.5vh;
+    bottom: 6.6vh;
+    z-index: 100;
+    opacity: 0;
+    display: none;
+}
+
+.ReservesContainer {
+    position: absolute;
+    left: 128vh;
+    bottom: 22vh; 
+    z-index: 100;
+}
+.ReservesContainer > .Card {
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 9.3vh;
+    height: 14.0vh;
+}
+#Reserve1 {
+    left: 0vh;
+}
+#Reserve2 {
+    left: 10.2vh;
+}
+#Reserve3 {
+    left: 20.8vh;
+}
+
+
+.ResultsContainer {width: 0px; height: 0px; position: absolute; top: 0px; left: 50%; margin-left: -80vh; border: 4px solid red; z-index: 1000;
+    display: none;
+}
+
+.Results {
+    position: absolute;
+    top: 26vh;
+    left: 49vh;
+    width: 60vh;
+    height: 41vh;
+    background-color: rgba(0,0,0,0.9);
+    z-index: 10000;
+    border-radius: 3vh;
+    border: 1.4vh solid #e6eb55; 
+    color: #FFF;
+    font-size: 3.2vh;
+    padding: 2vh;
+}
+
+.ResultInfo {
+    color: #FFF;
+    font-size: 6vh;
+}
+.PlayerResult > div {float: left;}
+.PlayerResult {clear: left;}
+.PlayerName {width: 36vh;}
+
+.DeckContainer {
+    position: absolute;
+    left: 10vh;
+    top: -7vh;
+}
+
+.Deck {
+    position: relative;
+    width: 16vh;
+    height: 24vh;
+    cursor: pointer;
+    opacity: 0;
+    background-color: #F00;
+    margin: 2vh;
+    margin-bottom: 5vh;
+    z-index: 1000;
+    border: 1vh solid #FFF;
+    border-radius: 1vh;
+}
+.Deck1 {
+    background-color: #50b139;
+}
+.Deck2 {
+    background-color: #e0d121;
+}
+.Deck3 {
+    background-color: #2027be;
+}
+.NobleContainer {
+    position: absolute; 
+    left: 147vh;
+    top: 0vh;
+}
+.Noble {
+    position: relative;
+    width: 11vh;
+    height: 12vh;
+    margin-bottom: 1vh;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    z-index: 1000;
+}
+.Noble[data-id="501"] {background-image: url(images/highres/nobles/501.jpg);}
+.Noble[data-id="502"] {background-image: url(images/highres/nobles/502.jpg);}
+.Noble[data-id="503"] {background-image: url(images/highres/nobles/503.jpg);}
+.Noble[data-id="504"] {background-image: url(images/highres/nobles/504.jpg);}
+.Noble[data-id="505"] {background-image: url(images/highres/nobles/505.jpg);}
+.Noble[data-id="506"] {background-image: url(images/highres/nobles/506.jpg);}
+.Noble[data-id="507"] {background-image: url(images/highres/nobles/507.jpg);}
+.Noble[data-id="508"] {background-image: url(images/highres/nobles/508.jpg);}
+.Noble[data-id="509"] {background-image: url(images/highres/nobles/509.jpg);}
+.Noble[data-id="510"] {background-image: url(images/highres/nobles/510.jpg);}
+
+.Noble.Selectable {
+    cursor: pointer;
+}
+
+.Winners {
+    padding-top: 30px;
+    clear: both;
+    color: #0F0;
+}

@@ -1,0 +1,122 @@
+<html>
+<head>
+    <script src="scripts/jquery-1.11.3.min.js"></script>
+    <script src="scripts/TweenMax.min.js"></script>
+    <script src="scripts/site.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Luckiest+Guy' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Satisfy' rel='stylesheet' type='text/css'>
+    <link href="style.css" type="text/css" rel="stylesheet" />
+</head>
+<body>
+    <div id="RootContainer">
+        <div class="ResultsContainer">
+            <div class="Results">
+                <div class="ResultInfo">Game ended</div>
+                <div class="PlayerResult PlayerResult1">
+                    <div class="PlayerName"></div>
+                    <div class="PlayerScore"></div>
+                </div>
+                <div class="PlayerResult PlayerResult2">
+                    <div class="PlayerName"></div>
+                    <div class="PlayerScore"></div>
+                </div>
+                <div class="PlayerResult PlayerResult3">
+                    <div class="PlayerName"></div>
+                    <div class="PlayerScore"></div>
+                </div>
+                <div class="PlayerResult PlayerResult4">
+                    <div class="PlayerName"></div>
+                    <div class="PlayerScore"></div>
+                </div>
+                <div class="Winners"></div>
+            </div>
+        </div>
+        <div id="BoardFixed">
+            <div class="Score Score1"><span>0</span><div class='Info'></div></div>
+            <div class="Score Score2"><span>0</span><div class='Info'></div></div>
+            <div class="Score Score3"><span>0</span><div class='Info'></div></div>
+            <div class="Score Score4"><span>0</span><div class='Info'></div></div>
+        </div>
+        <div id="Board">
+            <div class="Card CardCol1 CardRow1"></div>
+            <div class="Card CardCol1 CardRow2"></div>
+            <div class="Card CardCol1 CardRow3"></div>
+            <div class="Card CardCol2 CardRow1"></div>
+            <div class="Card CardCol2 CardRow2"></div>
+            <div class="Card CardCol2 CardRow3"></div>
+            <div class="Card CardCol3 CardRow1"></div>
+            <div class="Card CardCol3 CardRow2"></div>
+            <div class="Card CardCol3 CardRow3"></div>
+            <div class="Card CardCol4 CardRow1"></div>
+            <div class="Card CardCol4 CardRow2"></div>
+            <div class="Card CardCol4 CardRow3"></div>
+            
+            <div class="GemGold"></div>
+
+            <div class="GemContainer">
+                <div class="Gem Gem1"></div>
+                <div class="Gem Gem2"></div>
+                <div class="Gem Gem3"></div>
+                <div class="Gem Gem4"></div>
+                <div class="Gem Gem5"></div>
+                <div class="Gem Gem6"></div>
+            </div>
+            <div class="GemBackContainer">
+                <div class="GemBackInfo">Remove <span>0</span> gems</div>
+                <div class="Gem Gem1"><span></span><a href="#" class="GemBackLink"></a><a href="#" class="GemForwardLink"></a></div>
+                <div class="Gem Gem2"><span></span><a href="#" class="GemBackLink"></a><a href="#" class="GemForwardLink"></a></div>
+                <div class="Gem Gem3"><span></span><a href="#" class="GemBackLink"></a><a href="#" class="GemForwardLink"></a></div>
+                <div class="Gem Gem4"><span></span><a href="#" class="GemBackLink"></a><a href="#" class="GemForwardLink"></a></div>
+                <div class="Gem Gem5"><span></span><a href="#" class="GemBackLink"></a><a href="#" class="GemForwardLink"></a></div>
+                <div class="Gem Gem6"><span></span><a href="#" class="GemBackLink"></a><a href="#" class="GemForwardLink"></a></div>
+                <a href="#" class="GemBackClose">X</a>
+            </div>
+            
+            <div class="TokenContainer">
+                <a class="Token6" data-selected-count="0"></a>
+                <a class="Token1" data-selected-count="0"></a>
+                <a class="Token2" data-selected-count="0"></a>
+                <a class="Token3" data-selected-count="0"></a>
+                <a class="Token4" data-selected-count="0"></a>
+                <a class="Token5" data-selected-count="0"></a>
+            </div>
+            <div class="ReservesContainer">
+                <div class="Card Reserve" id="Reserve1"></div>
+                <div class="Card Reserve" id="Reserve2"></div>
+                <div class="Card Reserve" id="Reserve3"></div>
+            </div>
+            
+            <div class="BonusContainer">
+                <div class="Bonus Bonus1"></div>
+                <div class="Bonus Bonus2"></div>
+                <div class="Bonus Bonus3"></div>
+                <div class="Bonus Bonus4"></div>
+                <div class="Bonus Bonus5"></div>
+            </div>
+            <div class="DeckContainer">
+                <div class="Deck Deck3"></div>
+                <div class="Deck Deck2"></div>
+                <div class="Deck Deck1"></div>
+            </div>
+            <div class="NobleContainer">
+                <div class="Noble Noble1"></div>
+                <div class="Noble Noble2"></div>
+                <div class="Noble Noble3"></div>
+                <div class="Noble Noble4"></div>
+                <div class="Noble Noble5"></div>
+            </div>
+            <a class="Send" href="#">SEND</a>
+        </div>
+    </div>
+    <div id="NewGameContainer">
+        <select id="PlayerCount">
+            <option value="2">2 players</option>
+            <option value="3">3 players</option>
+            <option value="4">4 players</option>
+        </select>
+        <a href="#" id="NewGame">Start New Game</a>
+    </div>
+    
+    
+</body>
+</html>
