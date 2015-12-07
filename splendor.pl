@@ -20,7 +20,8 @@ availableGems([]).
 unshift(X, L, [X|L]).
 
 %close_cards([[],[],[]]).
-
+%card data - A->ID of the card , N1 to N5 - white,blue,green,red,black gems, X->color of the card
+%P-> point of the card, L-> deck of the card.
 cardData(A, [N1,N2,N3,N4,N5,0]-X-P, L) :- 
 	cardDataRaw(L,A,N1,N2,N3,N4,N5,P,_,_,_,_,_),
 	(
@@ -64,6 +65,7 @@ firstN(N, [H|T], [H|R]) :-
 		N1>0,firstN(N1, T, R)
 	),!.
 
+%shuffle nobles and select playerCount+1 from the front of the deck as nobles of the game.
 shuffleNobles(N) :-
 	allNobles(AllNobles),
 	shuffle(AllNobles, ShuffledNobles),
@@ -94,6 +96,10 @@ initialize(N) :-
 
 moveCard(L, [H|T], [H|L], T).
 
+%takes 4 lists ; L-> cards open on the board initially, CL->cards closed on the board initially
+%PL-> cards open on the board after operation, PCL->cards closed on the board after operation
+%If the L already has 4 cards open or CL has no more cards to give, then these will stay as the open and closed cards.
+%Otherwise take a "Card" from CL and put it to PL. PCL is the list which is CL-"Card". New open and closed cards are PL and PCL.
 dealCardsSingle(L, CL, PL, PCL) :-
 	length(L, Len),
 	length(CL, CLen),
@@ -196,8 +202,8 @@ doAction(Action) :-
 	NobleCount=0,
 
 	show(1, '~w chooses action: ~w ~n',[Player, Action]),
-	(
-		Action = getGems(TryGems,TryBackGems),
+	(	%The case where the player wants to get gems.
+		Action = getGems(TryGems,TryBackGems),    %Gems are players' coins. Tokens are board coins.
 		tokens(Tokens),
 		retract(player(Player, gems, CurrentGems)),
 
@@ -678,7 +684,8 @@ canBuyCard(Gems, Bonuses, CardId) :-
 	nth1(6, Gems, GoldCount),
 	MinusTotal =< GoldCount
 	.
-
+%gets random gems from gems and also keeps the excessive gems in backGems. If there are excessive gems after adding the newly
+%selected gems, then the backGems are selected also randomly from NewGems.
 randomGetGems(Gems, Tokens, RandGems, BackGems) :-
 	randomGems(Tokens, 3, true, RandGems),
 	addGems(Gems, RandGems, NewGems),
@@ -686,10 +693,13 @@ randomGetGems(Gems, Tokens, RandGems, BackGems) :-
 	ExcessGemCount is GemCount -10,
 	(ExcessGemCount=<0,BackGems=[0,0,0,0,0,0];ExcessGemCount>0,randomGems(NewGems, ExcessGemCount, false, BackGems)).
 
+%RandGems is random set of gems from BaseTokens.
 randomGems(BaseTokens, N, HasLimit, RandGems) :-
-	removeGems(BaseTokens, [0,0,0,0,0,1000], Tokens),
+	removeGems(BaseTokens, [0,0,0,0,0,1000], Tokens), %This is for ensuring no gold tokens are taken from the board.
 	randomGems2(Tokens, N, HasLimit, [], RandGems),!.
 
+%gets a list and gives a list indicating which places on the initial list are nonzero. The gems are given indexes from 1 to 6.
+%so if a list returns as [1,3,5] then that means there are only 3 piles of tokens on the board and they are white,green,black.
 nonzeroIndex([], _, []).
 nonzeroIndex([H|T], I, A) :-
 	J is I+1,
@@ -713,34 +723,34 @@ multGem([H|N], K, [X|M]) :-
 	multGem(N, K, M),
 	!.
 
-randomGems2(_, 0, _, _, [0,0,0,0,0,0]).
-randomGems2([0,0,0,0,0,0], _, _, _, [0,0,0,0,0,0]).
-randomGems2(Tokens, N, HasLimit, Selected, A) :-
+randomGems2(_, 0, _, _, [0,0,0,0,0,0]). %base case where we have the amount of gems we need.
+randomGems2([0,0,0,0,0,0], _, _, _, [0,0,0,0,0,0]).	%base case where we do not have any more gem to take.
+randomGems2(Tokens, N, HasLimit, Selected, A) :-  
 	nonzeroIndex(Tokens, 1, NonZero),
 	length(NonZero, NonZeroLength),
-	NonZeroLength1 is NonZeroLength+1,
-	repeat,
+	NonZeroLength1 is NonZeroLength+1, %to use in the random/3 we need to increase 1 because upper limit is not inclusive.
+	repeat,				    %this will keep repeating the following predicates until they succeed.
 	random(1, NonZeroLength1, NonZeroIdx),
-	nth1(NonZeroIdx, NonZero, Idx),
-	nth1(Idx, Tokens, Count),
-	Count>0,
+	nth1(NonZeroIdx, NonZero, Idx),    %get the id of the tokens we are going to take.
+	nth1(Idx, Tokens, Count),	   %get the count of the selected token.
+	Count>0,			   %This is checking that token is indeed nonzero. It was checked before.
 	gemByIdx(Idx, A1),
-	(
-		HasLimit,
-		N=3,
-		Count>=4,
-		(NonZeroLength=<2;random(1, 3, 2)),
-		multGem(A1, 2, A)
-		;
-		(
-			HasLimit,multGem(A1, 1000, A1X)
-			;
-			\+HasLimit,multGem(A1, 1, A1X)
+	(				  %The case where we take 2 gems.
+		HasLimit,		  %HasLimit is true when we are getting tokens from the board. It is false when we are
+		N=3,			  %returning excessive gems. 
+		Count>=4,		  %If the selected colour has at least 4 tokens then we can take 2 from them.
+		(NonZeroLength=<2;random(1, 3, 2)),  %If there are less than 3 piles of tokens on the board  this is legal.
+		multGem(A1, 2, A)		     %Also random(1,3,2) is always true so the general case where there are 3 or more
+		;				     %piles of tokens. Multiply A1 which is a vector with 0's and one 1 where the 1 indicates the colour of the gem.		
+		(  %The case where we take different colour gems.
+			HasLimit,multGem(A1, 1000, A1X)   %If we are taking gems from board, this ensures that we are not taking the same
+			;				  %colour gem again.
+			\+HasLimit,multGem(A1, 1, A1X) 	  %There is no such concern for giving back excessive gems.
 		),
 		removeGems(Tokens, A1X, Tokens2),
-		N2 is N-1,
-		randomGems2(Tokens2, N2, HasLimit, [Idx|Selected], A2),
-		addGems(A2, A1, A)
+		N2 is N-1,				%The count of coins are decreased by 1. 
+		randomGems2(Tokens2, N2, HasLimit, [Idx|Selected], A2),	%The selected gem is added to Selected.
+		addGems(A2, A1, A)	%After the recursion comes back, add the selected gem to the all previous gems and put to A.
 	),
 	!
 	.
