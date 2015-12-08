@@ -1,4 +1,12 @@
 
+% test if get gem action validity test is correct
+%
+% add your test case to the list with the following predicate
+%      validityTests(+GetGemAction, +CurrentGemsOnTable, +IsActionValid).
+%
+% perform all tests using the following predicate
+%      validityTestsPerform.
+
 validityTests([0,0,0,0,0,0],[0,0,0,0,0,0],true).
 validityTests([0,0,1,0,0,0],[0,0,0,0,0,0],false).
 validityTests([0,0,2,0,0,0],[0,0,1,0,0,0],false).
