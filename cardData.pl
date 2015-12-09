@@ -1,4 +1,4 @@
-:-module(cardData, [cardDataRaw/13, cardDataRawNoble/7]).
+:-module(cardData, [cardDataRaw/13, cardDataRawNoble/7]). 
 
 cardDataRaw(1, 1,   0,3,0,0,0, 0, 1,0,0,0,0).
 cardDataRaw(1, 2,   0,0,0,2,1, 0, 1,0,0,0,0).

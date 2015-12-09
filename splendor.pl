@@ -1,4 +1,4 @@
-:-module(splendor, [runGame/1, addGems/3, removeGems/3, subtractGems/3, gemCount/2, show/3, stateProxy/3, card/2, nobles/1, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4]). 
+:-module(splendor, [runGame/1, cardDataRaw/13, addGems/3, removeGems/3, subtractGems/3, gemCount/2, show/3, stateProxy/3, card/2, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4, isGetGemValid/4]). 
 %, ,minusGem/2
 
 :-dynamic closeCards/3.
@@ -32,12 +32,16 @@ cardData(A, [N1,N2,N3,N4,N5,0]-X-P, L) :-
 		cardDataRaw(_,A,_,_,_,_,_,_,_,_,_,_,1),X=5
 	).
 
+% given the card id, finds RequiredGems-BonusColor-Points info of the card
 card(A, C) :-
 	cardData(A, C, _). 
 
+% finds id, point and colors_needed_to_be_visited_by_this_noble info of all nobles
 allNobles(Z) :-
 	findall(Id-[N1, N2, N3, N4, N5, 0]-Point, cardDataRawNoble(Id, N1, N2, N3, N4, N5, Point), Z).
 
+% finds the ids of cards in each deck
+% initialCards(IdsOfCardsInTheFirstDeck,IdsOfCardsInTheSecondDeck,IdsOfCardsInTheThirdDeck)
 initialCards(L1,L2,L3) :-
 	findall(X, cardData(X,_-_-_,1), L1),
 	findall(X, cardData(X,_-_-_,2), L2),
@@ -57,6 +61,8 @@ shuffleCards :-
 	retractall(closeCards(_, _, _)),
 	assert(closeCards(SL1, SL2, SL3)).
 
+% finds the first N elements of a list
+% firstN (N, GivenList, SubList)
 firstN(_,[], []).
 firstN(N, [H|T], [H|R]) :-
 	N1 is N-1,
@@ -158,6 +164,9 @@ stateProxy(game, tokens, Tokens) :-
 
 stateProxy(X, Y, Z) :-
 	player(X, Y, Z).
+
+stateProxy(game, nobles, L) :-
+	findall(X, nobles(X), L).
 
 runGame(PlayerModules) :-
 	length(PlayerModules, N),
@@ -434,6 +443,7 @@ playerReservesCard(Player, CardId, BackGems, FromDeck) :-
 	!
 	.
 
+% reserves the first card of a deck (deck is chosen by the player)  
 playerReservesCardFromDeck(Player, DeckId, BackGems) :-
 	(
 		DeckId = 1, closeCards([CardId|_], _, _);
@@ -626,9 +636,8 @@ isGetGemValid4(X,C) :-
 			M=<1,
 			(
 				(A>=3,B=3);
-				(A>0,A<3,MC>=4,M=2);
-				(A>0,A<3,MC<4,A=B);
-				(A=0,B=0)
+				(A=2,A=B);
+				(A=1,MC<4)
 			)
 		)
 	),!
