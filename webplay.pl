@@ -75,7 +75,7 @@ updateView(Result) :-
 	splendor:tokens(Tokens),
 	splendor:isGameEnded(IsEnded),
 	findall(Winner, splendor:winner(Winner), Winners),
-	findall([NId|Noble], nobles(NId-Noble-_), NobleList),
+	findall([NId|Noble], splendor:nobles(NId-Noble-_), NobleList),
 	splendor:selectableNobles(SelectableNobles),
 	findall([NId2|Noble2], member(NId2-Noble2-_, SelectableNobles), SelectableNobleList),
 	format('"response": "~w", "isEnded": ~w, "winners": "~w", "selectableNobles": ~w, "cards": [~w,~w,~w], "cardData": ~w, "tokens": ~w, "nobles": ~w, "players":[', [Result, IsEnded, Winners, SelectableNobleList, L1,L2,L3,CardData, Tokens, NobleList]),
