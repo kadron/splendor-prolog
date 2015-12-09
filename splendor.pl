@@ -1,4 +1,4 @@
-:-module(splendor, [runGame/1, addGems/3, removeGems/3, subtractGems/3, gemCount/2, show/3, stateProxy/3, card/2, nobles/1, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4]). 
+:-module(splendor, [runGame/1, addGems/3, removeGems/3, subtractGems/3, gemCount/2, show/3, stateProxy/3, card/2, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4]). 
 %, ,minusGem/2
 
 :-dynamic closeCards/3.
@@ -158,6 +158,9 @@ stateProxy(game, tokens, Tokens) :-
 
 stateProxy(X, Y, Z) :-
 	player(X, Y, Z).
+
+stateProxy(game, nobles, L) :-
+	findall(X, nobles(X), L).
 
 runGame(PlayerModules) :-
 	length(PlayerModules, N),
@@ -626,9 +629,8 @@ isGetGemValid4(X,C) :-
 			M=<1,
 			(
 				(A>=3,B=3);
-				(A>0,A<3,MC>=4,M=2);
-				(A>0,A<3,MC<4,A=B);
-				(A=0,B=0)
+				(A=2,A=B);
+				(A=1,MC<4)
 			)
 		)
 	),!
