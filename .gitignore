@@ -5,3 +5,6 @@
 /SplendorGithub.sln
 /.vs/SplendorGithub/v14/.suo
 /.vs/config/applicationhost.config
+
+# ignore temporary prolog files
+*.pl~
