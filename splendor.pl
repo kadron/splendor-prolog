@@ -1,4 +1,4 @@
-:-module(splendor, [runGame/1, addGems/3, removeGems/3, subtractGems/3, gemCount/2, show/3, stateProxy/3, card/2, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4, isGetGemValid/4]). 
+:-module(splendor, [runGame/1, cardDataRaw/13, addGems/3, removeGems/3, subtractGems/3, gemCount/2, show/3, stateProxy/3, card/2, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4, isGetGemValid/4]). 
 %, ,minusGem/2
 
 :-dynamic closeCards/3.
