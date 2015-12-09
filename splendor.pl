@@ -12,9 +12,9 @@
 
 :-  use_module(cardData). 
 
-selectableNobles([]).
+selectableNobles([]).   %This is used for the case when there are few nobles visit the player at the same turn.
 
-openCards([],[],[]).
+openCards([],[],[]).    %Open visible cards on the board.
 availableGems([]).
 
 unshift(X, L, [X|L]).
@@ -355,7 +355,8 @@ bonusGem(5, [0,0,0,0,1,0]).
 gemCount([N1,N2,N3,N4,N5,N6], N) :-
 	N is N1+N2+N3+N4+N5+N6.
 
-% removes a card from open cards or reserves
+% removes a card from open cards or reserves. Remove card is used when a card is bought. We can only buy cards from
+%the open cards on board or our reserve.
 removeCard(Player, CardId) :-
 	player(Player, reserves, Reserves),
 	openCards(L1, L2, L3),
@@ -445,7 +446,7 @@ playerReservesCardFromDeck(Player, DeckId, BackGems) :-
 playerBuysCard(Player, CardId) :- 
 	player(Player, reserves, PlayerReserves),
 	openCards(L1, L2, L3),
-	append([L1,L2,L3, PlayerReserves], AllAvailableCards),
+	append([L1,L2,L3, PlayerReserves], AllAvailableCards),  %All card that can be bought if there are enough gems.
 	show(10, 'Available cards:~w ~w ~w~n', [CardId, PlayerReserves, AllAvailableCards, CardId]),
 	member(CardId, AllAvailableCards),
 	!,
@@ -453,12 +454,12 @@ playerBuysCard(Player, CardId) :-
 	player(Player, gems, Gems),
 	player(Player, bonuses, Bonuses),
 
-	removeGems(RequiredGems, Bonuses, RequiredMinusBonus),
-	subtractGems(Gems, RequiredMinusBonus, RemainingGems),
+	removeGems(RequiredGems, Bonuses, RequiredMinusBonus),	%Subtract card bonuses from the required gems for buying the card. 
+	subtractGems(Gems, RequiredMinusBonus, RemainingGems),  %Subtract the remanining gems from current gems. 
 
-	minusGemTotal(RemainingGems, MinusTotal),
-	nth1(6, Gems, GoldCount),
-	MinusTotal =< GoldCount,
+	minusGemTotal(RemainingGems, MinusTotal),		%If the remaining gems contain minus numbers,
+	nth1(6, Gems, GoldCount),			        %Look at the gold gems of the player.
+	MinusTotal =< GoldCount,				%If it has enough gold gems to compensate then remove the gems.
 
 	removeGems(Gems, RequiredMinusBonus, RemainingGems1),
 	removeGems(RemainingGems1, [0,0,0,0,0,MinusTotal], RemainingGems2),
@@ -470,10 +471,10 @@ playerBuysCard(Player, CardId) :-
 	assert(player(Player, gems, RemainingGems2)),
 
 	retract(tokens(Tokens)),
-	removeGems(RequiredMinusBonus, Gems, PaidByGoldenGems),
-	addGems(Tokens, RequiredMinusBonus, NewTokens),
-	subtractGems(NewTokens, PaidByGoldenGems, NewTokens2),
-	addGems(NewTokens2, [0,0,0,0,0,MinusTotal], NewTokens3),
+	removeGems(RequiredMinusBonus, Gems, PaidByGoldenGems),	  %we remove gems from requiredMinusBonus to see how many gems are
+	addGems(Tokens, RequiredMinusBonus, NewTokens),		  %taken from gold pile. removeGems will have 0s when the subtraction
+	subtractGems(NewTokens, PaidByGoldenGems, NewTokens2),	  %results in a negative number so when we subtract them we do not have
+	addGems(NewTokens2, [0,0,0,0,0,MinusTotal], NewTokens3),  %to worry about adding gems to the board tokens more than necessary.	
 	assert(tokens(NewTokens3)),
 
 	bonusGem(BonusColor, BonusGem),
@@ -484,19 +485,19 @@ playerBuysCard(Player, CardId) :-
 	NewScore is Score + Points,
 	assert(player(Player, score, NewScore)),
 
-	dealCards,
+	dealCards,						 %put a card in place for the bought card
 
-	canGetNobles(NewBonuses, NobleGets),
+	canGetNobles(NewBonuses, NobleGets),			%The case where we have nobles who want to visit us
 	
 	length(NobleGets, NobleGetCount),
 	(
-		NobleGetCount = 0
+		NobleGetCount = 0				%If there are none, continue.
 		;
-		NobleGetCount = 1,
+		NobleGetCount = 1,			        %If there is one then add it to the player nobles.   
 		NobleGets = [NobleCard],
 		getNobleCard(Player, NobleCard)
 		;
-		NobleGetCount > 1,
+		NobleGetCount > 1,			        %If there are more than 1, prompt player to select one.
 		retractall(selectableNobles(_)),
 		assert(selectableNobles(NobleGets)),
 		show(5, 'Can get multiple nobles, should decide : ~w~n', [NobleGets]),
