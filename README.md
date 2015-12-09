@@ -51,6 +51,10 @@ The Action needs to be one of the following:
 	reserveCard(CardId, SendBackGems).
 	reserveCardFromDeck(DeckId, SendBackGems).
 
+	GetGems and SendBackGems are lists with 6 elements like [0,1,1,1,0,0], first five numbers denoting regular tokens and last number denoting gold token.
+	CardId is the card's ID number (e.g. 23 or 215).
+	DeckID is a number between 1 and 3.
+
 These predicates are used only for telling the action and matching its parameters. They are not evaluated. 
 
 Also the framework may invoke selectNoble predicate of the player to let it select from one of the noble cards in the NobleList. 
