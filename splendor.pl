@@ -32,12 +32,16 @@ cardData(A, [N1,N2,N3,N4,N5,0]-X-P, L) :-
 		cardDataRaw(_,A,_,_,_,_,_,_,_,_,_,_,1),X=5
 	).
 
+% given the card id, finds RequiredGems-BonusColor-Points info of the card
 card(A, C) :-
 	cardData(A, C, _). 
 
+% finds id, point and colors_needed_to_be_visited_by_this_noble info of all nobles
 allNobles(Z) :-
 	findall(Id-[N1, N2, N3, N4, N5, 0]-Point, cardDataRawNoble(Id, N1, N2, N3, N4, N5, Point), Z).
 
+% finds the ids of cards in each deck
+% initialCards(IdsOfCardsInTheFirstDeck,IdsOfCardsInTheSecondDeck,IdsOfCardsInTheThirdDeck)
 initialCards(L1,L2,L3) :-
 	findall(X, cardData(X,_-_-_,1), L1),
 	findall(X, cardData(X,_-_-_,2), L2),
@@ -57,6 +61,8 @@ shuffleCards :-
 	retractall(closeCards(_, _, _)),
 	assert(closeCards(SL1, SL2, SL3)).
 
+% finds the first N elements of a list
+% firstN (N, GivenList, SubList)
 firstN(_,[], []).
 firstN(N, [H|T], [H|R]) :-
 	N1 is N-1,
@@ -437,6 +443,7 @@ playerReservesCard(Player, CardId, BackGems, FromDeck) :-
 	!
 	.
 
+% reserves the first card of a deck (deck is chosen by the player)  
 playerReservesCardFromDeck(Player, DeckId, BackGems) :-
 	(
 		DeckId = 1, closeCards([CardId|_], _, _);
