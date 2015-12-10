@@ -4,7 +4,7 @@ Ersin Basaran's Implementation of Splendor.
 
 In order to run the game the splendor.pl file must be consulted first.
 
-	[Splendor].
+	[splendor].
 
 To start a game, runGame predicate can be used. It initializes the board and players and run the game in batch mode without requiring any user interaction unless a human player is selected. 
 
