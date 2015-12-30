@@ -128,6 +128,9 @@ dealCards :-
 	assert(openCards(PL1,PL2,PL3)),
 	assert(closeCards(PCL1,PCL2,PCL3)).
 
+% adds player's initial score, bonuses, gems, reserve cards, noble tiles
+% additionally uses player's module and its initialize predicate
+% for each player name in PlayerModules
 initializePlayers(PlayerModules) :-
 	length(PlayerModules, PlayerCount),
 	PlayerCount > 1, PlayerCount =< 4,

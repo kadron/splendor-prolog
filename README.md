@@ -4,7 +4,7 @@ Ersin Basaran's Implementation of Splendor.
 
 In order to run the game the splendor.pl file must be consulted first.
 
-	[Splendor].
+	[splendor].
 
 To start a game, runGame predicate can be used. It initializes the board and players and run the game in batch mode without requiring any user interaction unless a human player is selected. 
 
@@ -50,6 +50,10 @@ The Action needs to be one of the following:
 	buyCard(CardId).
 	reserveCard(CardId, SendBackGems).
 	reserveCardFromDeck(DeckId, SendBackGems).
+
+	GetGems and SendBackGems are lists with 6 elements like [0,1,1,1,0,0], first five numbers denoting regular tokens and last number denoting gold token.
+	CardId is the card's ID number (e.g. 23 or 215).
+	DeckID is a number between 1 and 3.
 
 These predicates are used only for telling the action and matching its parameters. They are not evaluated. 
 
