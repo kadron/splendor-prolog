@@ -25,8 +25,9 @@ calculateNoblesImportance(Nobles,NewImportance):-
 			true
 		)
 	),
-	importanceColor(Result), NewImportance = Result,
-	nl,write('IMPORTANCE:'),write(NewImportance),nl.
+	importanceColor(Result), NewImportance = Result
+	%,nl,write('IMPORTANCE:'),write(NewImportance),nl
+	.
 
 calculateCardsImportance(Cards,NewImportance):-
 	retractall(importanceColor(_)),
@@ -38,8 +39,9 @@ calculateCardsImportance(Cards,NewImportance):-
 			true
 		)
 	),
-	importanceColor(Result), NewImportance = Result,
-	write('IMPORTANCECARDS:'),write(NewImportance),nl.
+	importanceColor(Result), NewImportance = Result
+	%,write('IMPORTANCECARDS:'),write(NewImportance),nl
+	.
 
 decideCardToBuy(CanBuyCards,ImportantCards):-
 	b_sort(CanBuyCards,[],ImportantCards).
@@ -91,16 +93,16 @@ decideAction(Player, Oponents, StateProxy, Action) :-
 	(
 		canBuyCards(Gems, Bonuses, Cards, CanBuyCards),
 		decideCardToBuy(CanBuyCards, ImportantCards),
-		write('IMPORTANT:'),write(ImportantCards),nl,
+		%write('IMPORTANT:'),write(ImportantCards),nl,
 		last(CardId,ImportantCards),
 		Action = buyCard(CardId)
 		;
 		call(StateProxy, game, tokens, Tokens),
 		decideCardToBuy(Cards, SortedCards),
-		write('CARDSONBOARD:'),write(Cards),nl,
-		write('CARDS:'),write(SortedCards),nl,
+		%write('CARDSONBOARD:'),write(Cards),nl,
+		%write('CARDS:'),write(SortedCards),nl,
 		set(SortedCards, Removed),
-		write('Removed:'),write(Removed),nl,
+		%write('Removed:'),write(Removed),nl,
 		decideGemToGets(Removed, Bonuses,Gems, Tokens, RandGems, BackGems),
 		%randomGetGems(Gems, Tokens, RandGems, BackGems),
 		Action = getGems(RandGems, BackGems)
@@ -117,23 +119,24 @@ decideGemToGets(SortedCards, Bonuses, Gems, Tokens, GetGems, BackGems):-
 		(
 			sortedCardList(AvailableListCards),
 			card(CardId, RequiredGems-BonusColor-Points), removeGems(RequiredGems, Total, Result),
-			gemCount(Result, N), N > 3, del(CardId, AvailableListCards, NewList),retractall(sortedCardList(_)), assert(sortedCardList(NewList)),
-			write('CardId:'),write(CardId),nl, 
-			write('RequiredGems:'),write(RequiredGems),nl, 
-			write('Gems:'),write(Total),nl, 
-			write('Result:'),write(Result),nl
+			gemCount(Result, N), N > 3, del(CardId, AvailableListCards, NewList),retractall(sortedCardList(_)), assert(sortedCardList(NewList))
+			%,write('CardId:'),write(CardId),nl, 
+			%write('RequiredGems:'),write(RequiredGems),nl, 
+			%write('Gems:'),write(Total),nl, 
+			%write('Result:'),write(Result),nl
 			;
 			true
 		)
 	),
 	sortedCardList(AvailableCards),
-	write('AvailableCards:'),write(AvailableCards),nl,
+	%write('AvailableCards:'),write(AvailableCards),nl,
 	calculateCardsImportance(AvailableCards, Importance),
-	write('ImportanceCards:'),write(Importance),nl,
+	%write('ImportanceCards:'),write(Importance),nl,
 	subtractGems([1,1,1,1,1,0],Importance,K),
 	removeToGems(K,[0,0,0,0,0,0],L), makeZeros(L,M),
-	randomGetGems([0,0,0,0,0,0],M,GetGems,BackGems),
-	write('GetGems:'),write(GetGems),nl.
+	randomGetGems([0,0,0,0,0,0],M,GetGems,BackGems)
+	%,write('GetGems:'),write(GetGems),nl
+	.
 
 
 selectNoble([H|_],H).

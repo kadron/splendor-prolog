@@ -187,7 +187,8 @@ runGameBatchOne([P1, P2], Count, P1WinCount, P2WinCount) :-
 	,
 	(
 		(winner(player1), P1WinCountNew is 1, P2WinCountNew is 0;true),!,
-		(winner(player2), P1WinCountNew is 0, P2WinCountNew is 1;true),!
+		(winner(player2), P1WinCountNew is 0, P2WinCountNew is 1;true),!,
+		(\+winner(player1), \+winner(player2), P1WinCountNew is 0, P2WinCountNew is 0 ;true),!
 	),
 	Count1 is Count-1,
 	!
@@ -307,7 +308,7 @@ gameStep(N) :-
 		show(0, 'Winner: ~w~n', [WinnerPlayer])
 		;
 		M=500,
-		show(-1, 'Max steps executed', [])
+		show(-1, 'Max steps executed~n', [])
 		;
 		gameStep(M))
 	.

@@ -1,4 +1,4 @@
-:- module(koala, []).
+:- module(simple2015700150, []).
 
 initialize(PlayerName, PlayerCount) :-
 	show(1, 'I am ~w of a ~w player game.~n', [PlayerName, PlayerCount]).

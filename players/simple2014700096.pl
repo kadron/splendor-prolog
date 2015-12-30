@@ -26,7 +26,7 @@ decideAction(Player, _, StateProxy, Action) :-
 		cardPointList(StateProxy, Player, CanBuyCards, PointList, Nobles),
 		maximum_list(PointList, _, Index),
 		nth1(Index, CanBuyCards, CardId),
-		nl,write(CanBuyCards),nl,write(PointList),nl,
+		%nl,write(CanBuyCards),nl,write(PointList),nl,
 		Action = buyCard(CardId)
 		;
 		length(Reserves, ReservesLength),
