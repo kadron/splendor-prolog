@@ -1,4 +1,4 @@
-:-module(splendor, [runGame/1, cardDataRaw/13, addGems/3, removeGems/3, subtractGems/3, gemCount/2, show/3, stateProxy/3, card/2, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4, isGetGemValid/4]). 
+:-module(splendor, [runGame/1, cardDataRaw/13, addGems/3, removeGems/3, subtractGems/3, gemCount/2, show/3, stateProxy/3, card/2, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4, isGetGemValid/4, runGameBatch/4]). 
 %, ,minusGem/2
 
 :-dynamic closeCards/3.
@@ -178,6 +178,41 @@ runGame(PlayerModules) :-
 	false
 	.
 
+runGameBatchOne([P1, P2], Count, P1WinCount, P2WinCount) :- 
+	(runGame([P1, P2]);true),
+	!
+	,
+	(
+		(winner(player1), P1WinCountNew is 1, P2WinCountNew is 0;true),!,
+		(winner(player2), P1WinCountNew is 0, P2WinCountNew is 1;true),!
+	),
+	Count1 is Count-1,
+	!
+	,
+	(
+		Count1>0,
+		runGameBatchOne([P1, P2], Count1, P1WinCountRest, P2WinCountRest),
+		!
+		,
+		P1WinCount is P1WinCountNew + P1WinCountRest,
+		P2WinCount is P2WinCountNew + P2WinCountRest
+		;
+		Count1=0,
+		P1WinCount is P1WinCountNew,
+		P2WinCount is P2WinCountNew
+	),!.
+
+% perform 2*Count batch games agains players P1 & P2 by swaping sides
+runGameBatch([P1, P2], Count, P1WinCount, P2WinCount) :-
+	verbose(Verbose),
+	setVerbose(0), 
+	runGameBatchOne([P1,P2], Count, P1WinCount1, P2WinCount1),!,
+	runGameBatchOne([P2,P1], Count, P1WinCount2, P2WinCount2),!,
+	P1WinCount is P1WinCount1+P1WinCount2,
+	P2WinCount is P2WinCount1+P2WinCount2,
+	setVerbose(Verbose)
+.
+
 runOneIteration :- 
 	currentPlayer(Player),
 	oponent(Oponents),
@@ -262,9 +297,11 @@ gameStep(N) :-
 	runOneIteration,
 	(
 		isGameEnded,
-		show(0, 'Game ended', []),
+		show(10, 'Game ended~n', []),
 		findall(Player-Score, player(Player, score, Score), Scores),
-		show(0, '~nScores: ~w~n',[Scores])
+		show(0, 'Scores: ~w~n',[Scores]),
+		winner(WinnerPlayer),
+		show(0, 'Winner: ~w~n', [WinnerPlayer])
 		;
 		M=500,
 		show(-1, 'Max steps executed', [])
@@ -423,7 +460,7 @@ playerReservesCard(Player, CardId, BackGems, FromDeck) :-
 			NewNewTokens = NewTokens
 			;
 			NewGemsTotal>10, 
-			show(1, 'Reserve causes more then 10 gems~n', []),
+			show(20, 'Reserve causes more then 10 gems~n', []),
 			subtractGems(NewGems, BackGems, NewNewGems),
 			totalGem(NewNewGems, NewNewGemsTotal),
 			minGem(NewNewGems, NewNewMinGem),
@@ -457,7 +494,7 @@ playerBuysCard(Player, CardId) :-
 	player(Player, reserves, PlayerReserves),
 	openCards(L1, L2, L3),
 	append([L1,L2,L3, PlayerReserves], AllAvailableCards),  %All card that can be bought if there are enough gems.
-	show(10, 'Available cards:~w ~w ~w~n', [CardId, PlayerReserves, AllAvailableCards, CardId]),
+	show(20, 'Available cards:~w ~w ~w~n', [CardId, PlayerReserves, AllAvailableCards, CardId]),
 	member(CardId, AllAvailableCards),
 	!,
 	card(CardId, RequiredGems-BonusColor-Points),
@@ -514,14 +551,17 @@ playerBuysCard(Player, CardId) :-
 		!,
 		getPlayerModule(Player, Module),
 		Module:selectNoble(NobleGets, SelectedNoble),
+		show(5, '~w chooses noble card: ~w~n', [Player, SelectedNoble]),
 		getNobleCard(Player, SelectedNoble)
 	),
 
-	show(5, 'Getted noble tiles: ~w~n', [NobleGets]),
+	show(20, 'Getted noble tiles: ~w~n', [NobleGets]),
 	!
 	.
 
 getNobleCard(Player, NobleCard) :-
+	show(5, '~w receives noble card: ~w~n', [Player, NobleCard]),
+
 	NobleCard = Nid-X2-C2, 
 	retract(nobles(Nid-X2-C2)),
 	retract(player(Player, score, Score2)),

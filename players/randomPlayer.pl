@@ -20,6 +20,7 @@ decideAction(Player, Oponents, StateProxy, Action) :-
 	call(StateProxy, Player, bonuses, Bonuses),
 	call(StateProxy, Player, reserves, Reserves),
 	call(StateProxy, game, cards, Cards),
+	call(StateProxy, game, tokens, Tokens),
 	(
 		length(Reserves, ReservesLength),
 		ReservesLength<3,
@@ -28,13 +29,13 @@ decideAction(Player, Oponents, StateProxy, Action) :-
 		CardsLength1 is CardsLength+1,
 		random(1, CardsLength1, ReserveId),
 		nth1(ReserveId, Cards, ReservedCard),
-		Action = reserveCard(ReservedCard)
+		getReserveBackGems(Gems, Tokens, ReserveBackGems),
+		Action = reserveCard(ReservedCard, ReserveBackGems)
 		;
 		canBuyCards(Gems, Bonuses, Cards, CanBuyCards),
 		nth1(1, CanBuyCards, CardId),
 		Action = buyCard(CardId)
 		;
-		call(StateProxy, game, tokens, Tokens),
 		randomGetGems(Gems, Tokens, RandGems, BackGems),
 		Action = getGems(RandGems, BackGems)
 	)
@@ -56,7 +57,13 @@ canBuyCards(Gems, Bonuses, [H|T], A) :-
 	canBuyCards(Gems, Bonuses, T, X2)
 	.
 
-
+getReserveBackGems(Gems, Tokens, BackGems) :-
+	nth1(6, Tokens, GoldTokens),
+	GoldenTokenCount is min(1, GoldTokens),
+	addGems(Gems, [0,0,0,0,0,GoldenTokenCount], NewGems),
+	gemCount(NewGems, GemCount),
+	ExcessGemCount is GemCount -10,
+	(ExcessGemCount=<0,BackGems=[0,0,0,0,0,0];ExcessGemCount>0,randomGems(NewGems, ExcessGemCount, false, BackGems)).
 
 randomTest(A) :-
 	A=3,
