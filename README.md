@@ -2,8 +2,7 @@
 Ersin Basaran's Implementation of Splendor.
 
 # Updates
-### runGameBatch predicate 
-*30/12/2015*
+##### runGameBatch predicate *30/12/2015*
 
 The frame now includes a new predicate 
 
