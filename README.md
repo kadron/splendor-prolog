@@ -1,5 +1,23 @@
 # splendor-prolog
 Ersin Basaran's Implementation of Splendor.
+
+# Updates
+###### 30/12/2015: runGameBatch predicate added
+
+The frame now includes a new predicate 
+
+    runGameBatch([P1, P2], Count, P1WinCount, P2WinCount)
+
+Example usage:
+
+    runGameBatch([randomPlayer, randomPlayer], 50, P1WinCount, P2WinCount).
+
+which returns player win counts as P1WinCount and P2WinCount after simulating 100 games (50 with P1 vs P2, 50 with P2 vs P1).
+
+If any draw happens (unlikely but possible), it counts both players as winners. Therefore 
+
+    P1WinCount + P2WinCount = 100 + drawCount
+
 # Getting Started 
 
 In order to run the game the splendor.pl file must be consulted first.
