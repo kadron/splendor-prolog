@@ -1,4 +1,4 @@
-:-module(splendor, [runGame/1, cardDataRaw/13, addGems/3, removeGems/3, subtractGems/3, gemCount/2, show/3, stateProxy/3, card/2, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4, isGetGemValid/4, runGameBatch/4]). 
+:-module(splendor, [runGame/1, cardDataRaw/13, addGems/3, removeGems/3, subtractGems/3, gemCount/2, show/3, stateProxy/3, card/2, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4, isGetGemValid/4, runGameBatch/4, doTournament/1, doTournament/2]). 
 %, ,minusGem/2
 
 :-dynamic closeCards/3.
@@ -182,6 +182,7 @@ runGame(PlayerModules) :-
 	.
 
 runGameBatchOne([P1, P2], Count, P1WinCount, P2WinCount) :- 
+	show(-10,'~w vs ~w (~w remaining games)                           \r', [P1, P2, Count]),
 	(runGame([P1, P2]);true),
 	!
 	,
@@ -209,13 +210,86 @@ runGameBatchOne([P1, P2], Count, P1WinCount, P2WinCount) :-
 % perform 2*Count batch games agains players P1 & P2 by swaping sides
 runGameBatch([P1, P2], Count, P1WinCount, P2WinCount) :-
 	verbose(Verbose),
-	setVerbose(0), 
+	setVerbose(-10),
 	runGameBatchOne([P1,P2], Count, P1WinCount1, P2WinCount1),!,
 	runGameBatchOne([P2,P1], Count, P2WinCount2, P1WinCount2),!,
 	P1WinCount is P1WinCount1+P1WinCount2,
 	P2WinCount is P2WinCount1+P2WinCount2,
 	setVerbose(Verbose)
 .
+
+tournamentPlayer(Name) :-
+	directory_files('players',L), 
+	member(M, L), 
+	file_name_extension(Name, 'pl', M),
+	Name \= 'human',
+	Name \= 'webPlayer'.
+
+doTournament(Count) :-
+	findall(
+		Name,
+		tournamentPlayer(Name), 
+		Players
+	),
+	doTournament(Players, Count)
+	.
+
+doTournament(Players, Count) :-
+	show(-1, 'Tournament starting with players: ~w~n~n',[Players]),
+	!,
+	findall(
+		P1-P2-P1Win-P2Win,
+		(
+			member(P1, Players),
+			member(P2, Players),
+			P1 @< P2,
+			runGameBatch([P1, P2], Count, P1Win, P2Win),
+			show(-10,'~w: ~w - ~w: ~w                                              \n', [P1, P1Win, P2, P2Win])
+		),
+		Results
+	),
+	%show(-1, 'Tournament completed: ~w~n', [Results]),
+	tournamentResults(Players, Results)
+	.
+
+tournamentResults(Players, Results) :-
+	findall(
+		Player-Point,
+		(
+			(member(Player-_-W1-W2, Results);member(_-Player-W2-W1, Results)),
+			(
+				(W1>W2,Point=1);
+				(W1=W2,Point=0.5);
+				(W1<W2,Point=0)
+			)
+		),
+		PlayerPoints
+	),
+	%show(-1, 'Player points: ~w~n', [PlayerPoints]),
+	findall(
+		Player-Score,
+		(
+			member(Player, Players),
+			findall(
+				Point,
+				member(Player-Point, PlayerPoints),
+				Points
+			),
+			sum_list(Points, Score)
+		),
+		PlayerScores
+	),
+	%show(-1, 'Player scores: ~w~n', [PlayerScores]),
+	sort(2, @>=, PlayerScores, PlayerScoresSorted),
+	show(-1, '~n~nTournament result table: ~n',[]),
+	show(-1,     '======================== ~n',[]),
+	forall(
+		member(Player-Score, PlayerScoresSorted),
+		show(-1, '~w\t: ~w~n',[Player, Score])
+	),
+	!
+	.
+
 
 runOneIteration :- 
 	currentPlayer(Player),
