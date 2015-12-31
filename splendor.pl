@@ -211,7 +211,7 @@ runGameBatch([P1, P2], Count, P1WinCount, P2WinCount) :-
 	verbose(Verbose),
 	setVerbose(0), 
 	runGameBatchOne([P1,P2], Count, P1WinCount1, P2WinCount1),!,
-	runGameBatchOne([P2,P1], Count, P1WinCount2, P2WinCount2),!,
+	runGameBatchOne([P2,P1], Count, P2WinCount2, P1WinCount2),!,
 	P1WinCount is P1WinCount1+P1WinCount2,
 	P2WinCount is P2WinCount1+P2WinCount2,
 	setVerbose(Verbose)
