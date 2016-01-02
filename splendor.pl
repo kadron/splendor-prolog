@@ -1,4 +1,4 @@
-:-module(splendor, [runGame/1, cardDataRaw/13, addGems/3, removeGems/3, subtractGems/3, gemCount/2, show/3, stateProxy/3, card/2, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4, isGetGemValid/4, runGameBatch/4, doTournament/1, doTournament/2]). 
+:-module(splendor, [runGame/1, cardDataRaw/13, addGems/3, removeGems/3, subtractGems/3, minusGemTotal/2, gemCount/2, show/3, stateProxy/3, card/2, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4, isGetGemValid/4, runGameBatch/4, doTournament/1, doTournament/2]). 
 %, ,minusGem/2
 
 :-dynamic closeCards/3.
@@ -161,6 +161,13 @@ initializePlayers(PlayerModules) :-
 stateProxy(game, cards, L) :-
 	openCards(L1, L2, L3),
 	append([L1,L2,L3], L).
+
+stateProxy(game, closeCards, [L1, L2, L3]) :-
+	closeCards(TL1, TL2, TL3),
+	shuffle(TL1, L1),
+	shuffle(TL2, L2),
+	shuffle(TL3, L3)
+	.
 
 stateProxy(game, tokens, Tokens) :-
 	tokens(Tokens).
