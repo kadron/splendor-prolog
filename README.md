@@ -100,13 +100,24 @@ The framework supplies the information about the game state and player states us
 	get reserved cards:
 		call(StateProxy, Player, reserves, Reserves),
 
+	get acquired nobles:
+		call(StateProxy, Player, nobles, Nobles),
+
+	get score:
+		call(StateProxy, Player, score, Score),
+
 	get all opened cards
 		call(StateProxy, game, cards, Cards),
+
+	get close cards (**new**) (`Cards` is a list `[D1,D2,D3]` which includes the close cards in each deck and they are shuffled at each call)
+		call(StateProxy, game, closeCards, Cards),
+
+	get available nobles 
+		call(StateProxy, game, nobles, Nobles),
 
 	get one openent's score
 		call(StateProxy, Oponent, score, OponentScore)
 
-	...
 
 StateProxy allows framework to hide the corresponding dynamic predicate from the players to prevent hacks. 
 
