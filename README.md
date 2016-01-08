@@ -11,6 +11,7 @@ In order to use this feature, you need to define the predicate in your player mo
     	call(StateProxy, game, winners, Winners),
 	    show(-1, 'OnGameEnd: ~w~n', [Winners]).
 
+Here `Winners` is a list of winners. In case of a draw, both players will be in this list. 
 
 ###### 31/12/2015: doTournament/1 and doTournament/2 predicates are added
 The frame now includes a new predicate to perform complete tournaments. In order to run the tournament use one of the followings:
