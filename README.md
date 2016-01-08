@@ -1,10 +1,46 @@
 # splendor-prolog
 Ersin Basaran's Implementation of Splendor.
+
+# Updates
+###### 08/01/2016: onGameEnd/3 predicate added
+At the end of each game, the frame calls onGameEnd/3 predicate of each players, if they are defined in player modules. You don't need to put onGameEnd predicate in the public list. 
+
+In order to use this feature, you need to define the predicate in your player module file. As in `decideAction` predicate, the state information is passed through `stateProxy` predicate. 
+
+    onGameEnd(Player, Oponents, StateProxy) :-
+    	call(StateProxy, game, winners, Winners),
+	    show(-1, 'OnGameEnd: ~w~n', [Winners]).
+
+
+###### 31/12/2015: doTournament/1 and doTournament/2 predicates are added
+The frame now includes a new predicate to perform complete tournaments. In order to run the tournament use one of the followings:
+
+    doTournament(50).
+    doTournament([Player1, Player2, ..., PlayerN], 50).
+
+The first one, gets all the players in players folder, runs the tournament and prints the result. If you want to have a tournament with a subset of players, use second one by providing the list of players. In this example, each player plays 100 games with each other players. 
+
+###### 30/12/2015: runGameBatch predicate is added
+
+The frame now includes a new predicate 
+
+    runGameBatch([P1, P2], Count, P1WinCount, P2WinCount)
+
+Example usage:
+
+    runGameBatch([randomPlayer, randomPlayer], 50, P1WinCount, P2WinCount).
+
+which returns player win counts as P1WinCount and P2WinCount after simulating 100 games (50 with P1 vs P2, 50 with P2 vs P1).
+
+If any draw happens (unlikely but possible), it counts both players as winners. Therefore 
+
+    P1WinCount + P2WinCount = 100 + drawCount
+
 # Getting Started 
 
 In order to run the game the splendor.pl file must be consulted first.
 
-	[Splendor].
+	[splendor].
 
 To start a game, runGame predicate can be used. It initializes the board and players and run the game in batch mode without requiring any user interaction unless a human player is selected. 
 
@@ -51,6 +87,10 @@ The Action needs to be one of the following:
 	reserveCard(CardId, SendBackGems).
 	reserveCardFromDeck(DeckId, SendBackGems).
 
+	GetGems and SendBackGems are lists with 6 elements like [0,1,1,1,0,0], first five numbers denoting regular tokens and last number denoting gold token.
+	CardId is the card's ID number (e.g. 23 or 215).
+	DeckID is a number between 1 and 3.
+
 These predicates are used only for telling the action and matching its parameters. They are not evaluated. 
 
 Also the framework may invoke selectNoble predicate of the player to let it select from one of the noble cards in the NobleList. 
@@ -70,13 +110,24 @@ The framework supplies the information about the game state and player states us
 	get reserved cards:
 		call(StateProxy, Player, reserves, Reserves),
 
+	get acquired nobles:
+		call(StateProxy, Player, nobles, Nobles),
+
+	get score:
+		call(StateProxy, Player, score, Score),
+
 	get all opened cards
 		call(StateProxy, game, cards, Cards),
+
+	get close cards (**new**) (`Cards` is a list `[D1,D2,D3]` which includes the close cards in each deck and they are shuffled at each call)
+		call(StateProxy, game, closeCards, Cards),
+
+	get available nobles 
+		call(StateProxy, game, nobles, Nobles),
 
 	get one openent's score
 		call(StateProxy, Oponent, score, OponentScore)
 
-	...
 
 StateProxy allows framework to hide the corresponding dynamic predicate from the players to prevent hacks. 
 

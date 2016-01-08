@@ -1,10 +1,14 @@
-:- module(s2014700171, []).
+:- module(simple2014700171, []).
 
 :- dynamic bonuses/1.
 :- dynamic reserves/1.
 :- dynamic gems/1.
 :- dynamic nobleTiles/1.
 :- dynamic targets/1.
+
+initialize(PlayerName, PlayerCount) :-
+	show(1, 'I am ~w of a ~w player game.~n', [PlayerName, PlayerCount]).
+
 
 bonuses([0,0,0,0,0,0]).
 reserves([]).
