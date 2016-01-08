@@ -396,7 +396,7 @@ gameStep(N) :-
 			predicate_property(PlayerModule:onGameEnd(_,_,_), interpreted),
 			PlayerModule:onGameEnd(Player,Oponents,stateProxy)
 			;
-			\+ predicate_property(PlayerModule:onGameEnd(_,_,_), static)
+			\+ predicate_property(PlayerModule:onGameEnd(_,_,_), interpreted)
 		))
 		;
 		M=500,
