@@ -43,6 +43,10 @@ decideAction(Player, Oponents, StateProxy, Action) :-
 	,call(StateProxy, Oponent, score, _)
 	.
 
+onGameEnd(Player, Oponents, StateProxy) :-
+	call(StateProxy, game, winners, Winners),
+	show(-1, 'OnGameEnd: ~w~n', [Winners]).
+
 selectNoble([H|_],H).
 
 canBuyCards(_, _, [], []).

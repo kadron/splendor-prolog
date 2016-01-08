@@ -178,6 +178,9 @@ stateProxy(X, Y, Z) :-
 stateProxy(game, nobles, L) :-
 	findall(X, nobles(X), L).
 
+stateProxy(game, winners, Winners) :-
+	findall(Winner, winner(Winner), Winners).
+
 runGame(PlayerModules) :-
 	length(PlayerModules, N),
 	initialize(N),
@@ -386,7 +389,15 @@ gameStep(N) :-
 		findall(Player-Score, player(Player, score, Score), Scores),
 		show(0, 'Scores: ~w~n',[Scores]),
 		winner(WinnerPlayer),
-		show(0, 'Winner: ~w~n', [WinnerPlayer])
+		show(0, 'Winner: ~w~n', [WinnerPlayer]),
+		forall(player(Player, module, PlayerModule),
+		(
+			oponent(Oponents),
+			predicate_property(PlayerModule:onGameEnd(_,_,_), static),
+			PlayerModule:onGameEnd(Player,Oponents,stateProxy)
+			;
+			\+ predicate_property(PlayerModule:onGameEnd(_,_,_), static)
+		))
 		;
 		M=500,
 		show(-1, 'Max steps executed~n', [])
