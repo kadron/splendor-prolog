@@ -2,6 +2,16 @@
 Ersin Basaran's Implementation of Splendor.
 
 # Updates
+###### 08/12/2016: onGameEnd/3 predicate added
+At the end of each game, the frame calls onGameEnd/3 predicate of each players, if they are defined in player modules. You don't need to put onGameEnd predicate in the public list. 
+
+In order to use this feature, you need to define the predicate in your player module file. As in `decideAction` predicate, the state information is passed through `stateProxy` predicate. 
+
+    onGameEnd(Player, Oponents, StateProxy) :-
+    	call(StateProxy, game, winners, Winners),
+	    show(-1, 'OnGameEnd: ~w~n', [Winners]).
+
+
 ###### 31/12/2015: doTournament/1 and doTournament/2 predicates are added
 The frame now includes a new predicate to perform complete tournaments. In order to run the tournament use one of the followings:
 
