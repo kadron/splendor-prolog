@@ -314,9 +314,11 @@ runOneIteration :-
 	getPlayerModule(Player, Module),
 	get_time(StartTime),
 	timeLimit(TimeLimit),
+	player(Player, timeTotal, PreviousTime),
+	TempTimeLimit is TimeLimit - PreviousTime + 1, % 1 is added to be safe
 	!,
 	catch(
-		call_with_time_limit(TimeLimit,Module:decideAction(Player, Oponents, stateProxy, Action)),
+		call_with_time_limit(TempTimeLimit,Module:decideAction(Player, Oponents, stateProxy, Action)),
 		time_limit_exceeded,
 		(	
 			retract(player(Player, timelimit, _)),
