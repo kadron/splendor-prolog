@@ -29,7 +29,11 @@ $(document).ready(function () {
     });
     
     $("#NewGame").click(function () {
-        $.get((port ? "http://127.0.0.1:" + port : "") + "/newGame?playerCount="+$("#PlayerCount").val(), function (data) {
+        var players = "";
+        for (var i=1;i<=4;i++) {
+            players += "player" + i +"=" + $("#Player"+i+"Type").val() + "&";
+        }
+        $.get((port ? "http://127.0.0.1:" + port : "") + "/newGame?playerCount="+$("#PlayerCount").val()+"&"+players, function (data) {
             updateView(data);
         });
         return false;
@@ -38,9 +42,13 @@ $(document).ready(function () {
     $(".GemBackLink").click(onGemBackLinkClick);
     $(".GemForwardLink").click(onGemForwardLinkClick);
     $(".Send").click(onSendClick);
+    $(".Next").click(onNextClick);
     $(".GemBackClose").click(onGemBackCloseClick);
     $(".Noble").click(onNobleClick);
 
+    $("#PlayerCount").change(onPlayerCountChange);
+    onPlayerCountChange();
+    
     setTimeout(function () {
         getState();
     }, 150);
@@ -53,6 +61,12 @@ function getParameterByName(name) {
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
+function onPlayerCountChange() {
+    var pc = parseInt($("#PlayerCount").val());
+    for (var i=0;i<4;i++) {
+        $("#Player"+(i+1)+"Type").css({display: i<pc?"block":"none"});
+    }
+}
 
 function onTokenClick() {
     if (state!=STATE_TURN || lastData.isEnded)
@@ -238,6 +252,12 @@ function onDeckClick() {
         TweenLite.to(".Card", 0.3, {opacity: 1});
         TweenLite.to(".Send", 0.2, {opacity: 0, display: "none"});
     }
+}
+
+function onNextClick() {
+    $.get((port?"http://127.0.0.1:"+port:"")+"/nextStep", function (data) {
+        updateView(data);
+    });
 }
 
 function onSendClick() {
@@ -434,6 +454,13 @@ function updateView2() {
             var h = $("#Board").height();
             $noble.addClass("Selectable");
             TweenLite.to($noble, 0.5, {scale: 1.4, x: -$("#Board").width()*0.4 - i*h/5, y: h/2-$noble.position().top});
+        }
+    }
+    if ($("#Player1Type").find("option").length == 0) {
+        for (var i=0;i<data.playerTypes.length-1;i++) {
+            var name = data.playerTypes[i];
+            for (var j=1;j<=4;j++)
+                $("#Player"+j+"Type").append("<option value='"+name+"'>"+name+"</option>");
         }
     }
 }

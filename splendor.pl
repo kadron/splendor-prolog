@@ -1,4 +1,4 @@
-:-module(splendor, [runGame/1, cardDataRaw/13, addGems/3, removeGems/3, subtractGems/3, minusGemTotal/2, gemCount/2, show/3, stateProxy/3, card/2, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4, isGetGemValid/4, runGameBatch/4, doTournament/1, doTournament/2]). 
+:-module(splendor, [runGame/1, cardDataRaw/13, addGems/3, removeGems/3, subtractGems/3, minusGemTotal/2, gemCount/2, show/3, stateProxy/3, card/2, setVerbose/1, canBuyCard/3, randomGems/4, randomGetGems/4, isGetGemValid/4, runGameBatch/4, doTournament/1, doTournament/2, totalGem/2]). 
 %, ,minusGem/2
 
 :-dynamic closeCards/3.
@@ -11,6 +11,9 @@
 :-dynamic selectableNobles/1.
 
 :-  use_module(cardData). 
+
+% time limit per game per player in seconds
+timeLimit(30).  
 
 selectableNobles([]).   %This is used for the case when there are few nobles visit the player at the same turn.
 
@@ -151,6 +154,8 @@ initializePlayers(PlayerModules) :-
 			assert(player(Player, gems, [0,0,0,0,0,0])),
 			assert(player(Player, reserves, [])),
 			assert(player(Player, nobleTiles, [])),
+			assert(player(Player, timeTotal, 0)),
+			assert(player(Player, timelimit, 0)),
 			assert(player(Player, module, PlayerModule)),
 			atom_concat('players/', PlayerModule, PlayerModuleFile),
 			use_module(PlayerModuleFile),
@@ -193,13 +198,16 @@ runGame(PlayerModules) :-
 
 runGameBatchOne([P1, P2], Count, P1WinCount, P2WinCount) :- 
 	show(-10,'~w vs ~w (~w remaining games)                           \r', [P1, P2, Count]),
-	(runGame([P1, P2]);true),
+	ttyflush,
+	(runGame([P1, P2]);true),!,
 	!
 	,
 	(
 		(winner(player1), P1WinCountNew is 1, P2WinCountNew is 0;true),!,
 		(winner(player2), P1WinCountNew is 0, P2WinCountNew is 1;true),!,
-		(\+winner(player1), \+winner(player2), P1WinCountNew is 0, P2WinCountNew is 0 ;true),!
+		(\+winner(player1), \+winner(player2), P1WinCountNew is 0, P2WinCountNew is 0,!
+			%, show(-100, 'ERROR!!!: NO WINNER!~n',[])
+			;true)
 	),
 	Count1 is Count-1,
 	!
@@ -220,7 +228,7 @@ runGameBatchOne([P1, P2], Count, P1WinCount, P2WinCount) :-
 % perform 2*Count batch games agains players P1 & P2 by swaping sides
 runGameBatch([P1, P2], Count, P1WinCount, P2WinCount) :-
 	verbose(Verbose),
-	setVerbose(-10),
+	setVerbose(-10), % @ersin -10
 	runGameBatchOne([P1,P2], Count, P1WinCount1, P2WinCount1),!,
 	runGameBatchOne([P2,P1], Count, P2WinCount2, P1WinCount2),!,
 	P1WinCount is P1WinCount1+P1WinCount2,
@@ -300,15 +308,32 @@ tournamentResults(Players, Results) :-
 	!
 	.
 
-
 runOneIteration :- 
 	currentPlayer(Player),
 	oponent(Oponents),
 	getPlayerModule(Player, Module),
+	get_time(StartTime),
+	timeLimit(TimeLimit),
 	!,
-	
-	Module:decideAction(Player, Oponents, stateProxy, Action),
-	doAction(Action)
+	catch(
+		call_with_time_limit(TimeLimit,Module:decideAction(Player, Oponents, stateProxy, Action)),
+		time_limit_exceeded,
+		(	
+			retract(player(Player, timelimit, _)),
+			assert(player(Player, timelimit, 1))
+		)
+	),
+	!,
+	get_time(EndTime),
+	TimePassed is EndTime - StartTime,
+	retract(player(Player, timeTotal, PreviousTime)),
+	NewTime is TimePassed + PreviousTime,
+	assert(player(Player, timeTotal, NewTime)),
+	player(Player, timelimit, OldTimeLimit),
+	(
+		NewTime < TimeLimit,OldTimeLimit=0,doAction(Action);
+		(NewTime >= TimeLimit;OldTimeLimit=1),retract(player(Player, timelimit, _)),assert(player(Player, timelimit, 1))
+	)
 .
 
 getNoble(Player, Id) :-
@@ -389,9 +414,11 @@ gameStep(N) :-
 		findall(Player-Score, player(Player, score, Score), Scores),
 		show(0, 'Scores: ~w~n',[Scores]),
 		winner(WinnerPlayer),
-		show(0, 'Winner: ~w~n', [WinnerPlayer]),
+		show(0, 'Winner: ~w~n', [WinnerPlayer]) , %@ersin - temporary comment
 		forall(player(Player, module, PlayerModule),
 		(
+			player(Player, timeTotal, TimeTotal),
+			show(0, 'Total time (~w/~w): ~w~n',[Player, PlayerModule, TimeTotal]),
 			oponent(Oponents),
 			predicate_property(PlayerModule:onGameEnd(_,_,_), interpreted),
 			PlayerModule:onGameEnd(Player,Oponents,stateProxy)
@@ -427,7 +454,9 @@ oponent(Oponents) :-
 isGameEnded :- 
 	player(_, score, A),
 	A >= 15,
-	turn(1).
+	turn(1);
+	player(_, timelimit, 1)
+	.
 
 isGameEnded(true) :-
 	isGameEnded.
@@ -436,6 +465,10 @@ isGameEnded(false) :-
 	\+ isGameEnded.
 
 winner(Player) :-
+	player(Oponent, timelimit, 1),!,
+	player(Player, score, _),
+	\+ Player = Oponent
+	;
 	player(Player, score, Score),
 	Score >= 15,
 	\+greaterPlayer(Player, Score).

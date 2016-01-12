@@ -22,6 +22,8 @@ user:file_search_path(document_root,	'www').
 
 :- http_handler(root(performAction), performAction, []).
 
+:- http_handler(root(nextStep), nextStep, []).
+
 :- http_handler(root(newGame), newGame, []).
 
 startServer(Port) :-
@@ -95,7 +97,23 @@ updateView(Result) :-
 			(LastPlayer = Player ; format(','))
 		)
 	),
-	format(']',[]).
+	format('], "playerTypes": [',[]),
+	findall(
+		_,
+		(
+			tournamentPlayer(Name),
+			format('"~w", ', [Name])
+		), 
+		_
+	),
+	format('""]')
+	.
+
+tournamentPlayer(Name) :-
+	directory_files('players',L), 
+	member(M, L), 
+	file_name_extension(Name, 'pl', M),
+	Name \= 'human'.
 
 performAction(Request) :-
     option(method(options), Request), !,
@@ -131,6 +149,30 @@ performAction(Request) :-
 	setVerbose(V)
 .
 
+nextStep(Request) :-
+    option(method(options), Request), !,
+    cors_enable(Request,
+                [ methods([get,post,delete])
+                ]),
+    format('~n').	
+
+nextStep(Request) :-
+	cors_enable,
+	http_parameters(Request,[ ]),
+
+format('Content-type: text/plain~n~n', []),
+
+	format('{"output": "'),
+	splendor:verbose(V),
+	setVerbose(20),
+	(splendor:runOneIteration;true),
+
+	format('", "wrongAction": ~w, ',[false]),
+	updateView([]),
+	format('}',[]),
+
+	setVerbose(V)
+.
 
 newGame(Request) :-
     option(method(options), Request), !,
@@ -142,7 +184,7 @@ newGame(Request) :-
 
 newGame(Request) :-
 	cors_enable,
-	http_parameters(Request,[ playerCount(PlayerCountStr, [])]),
+	http_parameters(Request,[ playerCount(PlayerCountStr, []), player1(Player1, []), player2(Player2, []), player3(Player3, []), player4(Player4, [])]),
 	atom_number(PlayerCountStr, PlayerCount),
 	format('Content-type: text/plain~n~n', []),
 
@@ -150,13 +192,20 @@ newGame(Request) :-
 	splendor:verbose(V),
 	setVerbose(20),
 	(
-		PlayerCount=2,(runGame([webPlayer,randomPlayer]);true);
-		PlayerCount=3,(runGame([webPlayer,randomPlayer,randomPlayer]);true);
-		PlayerCount=4,(runGame([webPlayer,randomPlayer,randomPlayer,randomPlayer]);true)
+		%PlayerCount=2,(runGame([Player1,Player2]);true);
+		%PlayerCount=3,(runGame([Player1,Player2,Player3]);true);
+		%PlayerCount=4,(runGame([Player1,Player2,Player3,Player4]);true)
+		PlayerCount=2,PlayerModules = [Player1,Player2];
+		PlayerCount=3,PlayerModules = [Player1,Player2,Player3];
+		PlayerCount=4,PlayerModules = [Player1,Player2,Player3,Player4]
 	),
+	length(PlayerModules, N),
+	splendor:initialize(N),
+	splendor:initializePlayers(PlayerModules),
+
 	format('", ',[]),
 
-	updateView(Action),
+	updateView([]),
 	format('}',[]),
 
 	setVerbose(V)

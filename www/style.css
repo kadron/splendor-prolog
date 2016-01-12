@@ -197,7 +197,7 @@ body {
     background-color: rgba(0,0,0,0.0);
 }
 
-.Send {
+.Send, .Next {
     position: absolute;
     left: 128vh;
     bottom: 25vh;
@@ -213,7 +213,12 @@ body {
     display: none;
     opacity: 0;
 }
-.Send:hover {
+.Next {
+    left: 145vh;
+    display: block;
+    opacity: 1;
+}
+.Send:hover, .Next:hover {
     box-shadow: -1.8vh 1.0vh 1.1vh 0vh rgba(0,0,0,0.3);
     transform: translate3d(0px,0px, 5px);
 }
@@ -313,8 +318,12 @@ body {
 z-index: 20;
 position: absolute;
 }
-#PlayerCount {
+#NewGameContainer #PlayerCount {
     font-size: 4vh;
+}
+#NewGameContainer select {
+    font-size: 2vh;
+    display: block;
 }
 #NewGameContainer {
     z-index: 20;
