@@ -328,8 +328,8 @@ runOneIteration :-
 	!,
 	get_time(EndTime),
 	TimePassed is EndTime - StartTime,
-	retract(player(Player, timeTotal, PreviousTime)),
-	NewTime is TimePassed + PreviousTime,
+	retract(player(Player, timeTotal, PreviousTime2)),
+	NewTime is TimePassed + PreviousTime2,
 	assert(player(Player, timeTotal, NewTime)),
 	player(Player, timelimit, OldTimeLimit),
 	(
@@ -408,8 +408,8 @@ nextTurn :-
 
 gameStep(N) :-
 	M is N+1,
-	show(1, 'Step ~w: ', [M]),
-	runOneIteration,
+	show(1, 'Step ~w: ', [M]),!,
+	runOneIteration,!,
 	(
 		isGameEnded,
 		show(10, 'Game ended~n', []),
@@ -417,10 +417,13 @@ gameStep(N) :-
 		show(0, 'Scores: ~w~n',[Scores]),
 		winner(WinnerPlayer),
 		show(0, 'Winner: ~w~n', [WinnerPlayer]) , %@ersin - temporary comment
-		forall(player(Player, module, PlayerModule),
+		forall(player(Player, module, PlayerModule2),
 		(
 			player(Player, timeTotal, TimeTotal),
-			show(0, 'Total time (~w/~w): ~w~n',[Player, PlayerModule, TimeTotal]),
+			show(0, 'Total time (~w/~w): ~w~n',[Player, PlayerModule2, TimeTotal])
+		)),
+		forall(player(Player, module, PlayerModule),
+		(
 			oponent(Oponents),
 			predicate_property(PlayerModule:onGameEnd(_,_,_), interpreted),
 			PlayerModule:onGameEnd(Player,Oponents,stateProxy)
